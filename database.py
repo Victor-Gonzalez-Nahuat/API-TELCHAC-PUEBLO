@@ -8,6 +8,13 @@ DB_PASSWORD = os.getenv('DB_PASSWORD')
 DB_NAME = os.getenv('DB_NAME')
 DB_PORT = int(os.getenv('DB_PORT'))
 
+def expandir_rango_fechas(desde, hasta):
+    """Ajusta el rango para que hasta incluya todo el día."""
+    desde_dt = datetime.datetime.strptime(desde, '%Y-%m-%d')
+    hasta_dt = datetime.datetime.strptime(hasta, '%Y-%m-%d') + datetime.timedelta(days=1) - datetime.timedelta(seconds=1)
+    return desde_dt, hasta_dt
+
+
 def get_connection():
     return pymysql.connect(
         host=DB_HOST,
