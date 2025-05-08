@@ -32,7 +32,8 @@ def obtenerTotalesYDescuentos(desde_fecha, hasta_fecha, contribuyente=None):
         cursor.execute("""
             SELECT 
                 COALESCE(SUM(id_neto), 0) AS total_neto, 
-                COALESCE(SUM(id_descuento), 0) AS total_descuento
+                COALESCE(SUM(id_descuento), 0) AS total_descuento,
+                COUNT(*) FILTER (WHERE id_status = 1) AS cantidad_status_1
             FROM TEARMO01
             WHERE id_fecha BETWEEN %s AND %s
             AND id_contribuyente LIKE %s
@@ -41,7 +42,8 @@ def obtenerTotalesYDescuentos(desde_fecha, hasta_fecha, contribuyente=None):
         cursor.execute("""
             SELECT 
                 COALESCE(SUM(id_neto), 0) AS total_neto, 
-                COALESCE(SUM(id_descuento), 0) AS total_descuento
+                COALESCE(SUM(id_descuento), 0) AS total_descuento,
+                COUNT(*) FILTER (WHERE id_status = 1) AS cantidad_status_1
             FROM TEARMO01
             WHERE id_fecha BETWEEN %s AND %s
         """, (desde_fecha, hasta_fecha))
@@ -51,7 +53,8 @@ def obtenerTotalesYDescuentos(desde_fecha, hasta_fecha, contribuyente=None):
 
     return {
         "total_neto": float(resultado[0]),
-        "total_descuento": float(resultado[1])
+        "total_descuento": float(resultado[1]),
+        "cantidad_status_1": int(resultado[2])
     }
 
 def obtenerRecibosConIntervaloYContribuyente(desde_fecha, hasta_fecha, contribuyente):
