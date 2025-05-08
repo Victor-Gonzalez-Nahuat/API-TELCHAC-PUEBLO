@@ -33,7 +33,7 @@ def obtenerTotalesYDescuentos(desde_fecha, hasta_fecha, contribuyente=None):
             SELECT 
                 COALESCE(SUM(id_neto), 0) AS total_neto, 
                 COALESCE(SUM(id_descuento), 0) AS total_descuento,
-                COUNT(*) FILTER (WHERE id_status = 1) AS cantidad_status_1
+                SUM(CASE WHEN id_status = 1 THEN 1 ELSE 0 END) AS cantidad_status_1
             FROM TEARMO01
             WHERE id_fecha BETWEEN %s AND %s
             AND id_contribuyente LIKE %s
@@ -43,7 +43,7 @@ def obtenerTotalesYDescuentos(desde_fecha, hasta_fecha, contribuyente=None):
             SELECT 
                 COALESCE(SUM(id_neto), 0) AS total_neto, 
                 COALESCE(SUM(id_descuento), 0) AS total_descuento,
-                COUNT(*) FILTER (WHERE id_status = 1) AS cantidad_status_1
+                SUM(CASE WHEN id_status = 1 THEN 1 ELSE 0 END) AS cantidad_status_1
             FROM TEARMO01
             WHERE id_fecha BETWEEN %s AND %s
         """, (desde_fecha, hasta_fecha))
