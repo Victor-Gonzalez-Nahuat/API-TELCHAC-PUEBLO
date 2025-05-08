@@ -33,19 +33,21 @@ def obtenerTotalesYDescuentos(desde_fecha, hasta_fecha, contribuyente=None):
             SELECT 
                 COALESCE(SUM(id_neto), 0) AS total_neto, 
                 COALESCE(SUM(id_descuento), 0) AS total_descuento,
-                SUM(CASE WHEN id_status = 1 THEN 1 ELSE 0 END) AS cantidad_status_1
+                COUNT(*) AS cantidad_registros
             FROM TEARMO01
             WHERE id_fecha BETWEEN %s AND %s
             AND id_contribuyente LIKE %s
+            AND id_status = 0
         """, (desde_fecha, hasta_fecha, f"%{contribuyente}%"))
     else:
         cursor.execute("""
             SELECT 
                 COALESCE(SUM(id_neto), 0) AS total_neto, 
                 COALESCE(SUM(id_descuento), 0) AS total_descuento,
-                SUM(CASE WHEN id_status = 1 THEN 1 ELSE 0 END) AS cantidad_status_1
+                COUNT(*) AS cantidad_registros
             FROM TEARMO01
             WHERE id_fecha BETWEEN %s AND %s
+            AND id_status = 0
         """, (desde_fecha, hasta_fecha))
 
     resultado = cursor.fetchone()
@@ -54,8 +56,9 @@ def obtenerTotalesYDescuentos(desde_fecha, hasta_fecha, contribuyente=None):
     return {
         "total_neto": float(resultado[0]),
         "total_descuento": float(resultado[1]),
-        "cantidad_status_1": int(resultado[2])
+        "cantidad_registros": int(resultado[2])
     }
+
 
 def obtenerRecibosConIntervaloYContribuyente(desde_fecha, hasta_fecha, contribuyente):
     conn = get_connection()
